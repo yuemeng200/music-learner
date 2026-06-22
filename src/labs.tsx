@@ -34,22 +34,41 @@ function playSequence(notes: number[], onSignal: (value: number) => void, gap = 
 
 export function SoundLab({ onSignal, onComplete }: LabProps) {
   const [pattern, setPattern] = useState([0, 2, 1, 2, 0, 2, 1, 2]);
+  const [playing, setPlaying] = useState(false);
   const [playhead, setPlayhead] = useState(-1);
+  const timers = useRef<number[]>([]);
   const sounds = [
     { name: "低音", midi: 48, color: "cobalt" },
     { name: "中音", midi: 60, color: "signal" },
     { name: "高音", midi: 72, color: "coral" },
   ];
 
-  const playPattern = () => {
+  const stopPattern = () => {
+    timers.current.forEach((timer) => window.clearTimeout(timer));
+    timers.current = [];
+    setPlaying(false);
+    setPlayhead(-1);
+  };
+
+  useEffect(() => () => {
+    timers.current.forEach((timer) => window.clearTimeout(timer));
+  }, []);
+
+  const togglePattern = () => {
+    if (playing) {
+      stopPattern();
+      return;
+    }
+
     onComplete();
-    pattern.forEach((soundIndex, index) => window.setTimeout(() => {
+    setPlaying(true);
+    timers.current = pattern.map((soundIndex, index) => window.setTimeout(() => {
       setPlayhead(index);
       const midi = sounds[soundIndex].midi;
       playMidi(midi, 0.25);
       onSignal(midiToFrequency(midi));
-      if (index === pattern.length - 1) window.setTimeout(() => setPlayhead(-1), 280);
     }, index * 260));
+    timers.current.push(window.setTimeout(stopPattern, pattern.length * 260));
   };
 
   return (
@@ -66,7 +85,7 @@ export function SoundLab({ onSignal, onComplete }: LabProps) {
         ))}
       </div>
       <div className="pattern-editor" aria-label="声音排列编辑器">
-        <div className="panel-caption"><div><span>8 个时刻</span><strong>点击每格，改变声音排列</strong></div><button className="compact-play compact-play--inverse" onClick={playPattern}><Play size={14} fill="currentColor" />播放</button></div>
+        <div className="panel-caption"><div><span>8 个时刻</span><strong>点击每格，改变声音排列</strong></div><button className="compact-play compact-play--inverse" onClick={togglePattern} aria-label={playing ? "暂停声音排列" : "播放声音排列"} aria-pressed={playing}>{playing ? <Pause size={14} fill="currentColor" /> : <Play size={14} fill="currentColor" />}{playing ? "暂停" : "播放"}</button></div>
         <div className="pattern-steps">
           {pattern.map((soundIndex, index) => (
             <button

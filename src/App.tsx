@@ -221,8 +221,8 @@ function MiniComposer({ onSignal, onComplete }: { onSignal: (value: number) => v
 }
 
 function App() {
-  const initialId = window.location.hash.replace("#/chapter/", "") || "pitch";
-  const [activeId, setActiveId] = useState(chapters.some((item) => item.id === initialId) ? initialId : "pitch");
+  const initialId = window.location.hash.replace("#/chapter/", "") || "sound";
+  const [activeId, setActiveId] = useState(chapters.some((item) => item.id === initialId) ? initialId : "sound");
   const [menuOpen, setMenuOpen] = useState(false);
   const [visited, setVisited] = useState<string[]>(() => {
     try { return JSON.parse(localStorage.getItem("sonic-atlas-progress") ?? "[]") as string[]; }

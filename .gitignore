@@ -19,6 +19,8 @@ Thumbs.db
 
 # Node.js / Frontend
 node_modules/
+.npm-cache/
+.pnpm-store/
 dist/
 build/
 .next/

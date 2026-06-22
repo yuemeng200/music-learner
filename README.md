@@ -16,6 +16,11 @@ npm run check
 npm run build
 ```
 
+## 部署
+
+- 推送到 `main` 后，GitHub Actions 会自动构建并发布 GitHub Pages。
+- Cloudflare Workers 保留手动部署：`npm run deploy`。
+
 ## 当前范围
 
 - 10 个互动章节（编号 0–9）。
